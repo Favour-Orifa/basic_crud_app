@@ -52,7 +52,7 @@ content-type: application/json
 
 ## Swagger UI
 
-[Swagger UI](screenshot.png) 
+![Swagger UI](screenshot.png) 
 
 ## Notes
 
