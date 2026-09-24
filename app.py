@@ -1,14 +1,16 @@
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 from typing import Optional
-app = FastAPI(title="Task API", version=1.0)
+app = FastAPI(title="Task API", version="1.0")
 
 @app.get("/")
 def root():
+    """Show basic API info and available endpoints."""
     return { "name": "Task API", "version": "1.0", "endpoints": ["/tasks"] }
 
 @app.get("/health")
 def health():
+    """Check that the server is alive."""
     return {"status" : "ok"}
 
 tasks = [
@@ -19,10 +21,12 @@ tasks = [
 
 @app.get("/tasks")
 def get_tasks():
+    """Return the full list of tasks."""
     return tasks
 
 @app.get("/tasks/{task_id}")
 def get_task_by_id(task_id : int):
+    """Return a single task by its id, or 404 if not found."""
     for task in tasks:
         if task["id"] == task_id:
             return task
@@ -33,6 +37,7 @@ class TaskCreate(BaseModel):
 
 @app.post("/tasks", status_code= 201)
 def create_task(newtask: TaskCreate):
+    """Create a new task with the given title."""
     if not newtask.title.strip():
         raise HTTPException(status_code= 400, detail= {"error": "title required"})
 
@@ -47,6 +52,7 @@ class TaskUpdate(BaseModel):
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id:int, updated : TaskUpdate):
+    """Update a task's title and optionally its done status."""
     if not updated.title.strip():
         raise HTTPException(status_code=400, detail={"error": "title required"})
     for task in tasks:
@@ -59,6 +65,7 @@ def update_task(task_id:int, updated : TaskUpdate):
 
 @app.delete("/tasks/{task_id}", status_code=204)
 def delete_task(task_id: int):
+    """Delete a task by its id."""
     for task in tasks:
         if task["id"] == task_id:
             tasks.remove(task)
